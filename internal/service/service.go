@@ -1,10 +1,14 @@
 package service
 
-import "github.com/Sysleec/TestEWallet/internal/model"
+import (
+	"context"
+
+	"github.com/Sysleec/TestEWallet/internal/model"
+)
 
 type WalletService interface {
-	CreateWallet() (*model.Wallet, error)
-	SendMoney(from, to string, amount int) error
-	GetHistory(id string) ([]model.Transaction, error)
-	GetWallet(id string) (*model.Wallet, error)
+	CreateWallet(ctx context.Context) (*model.Wallet, error)
+	SendMoney(ctx context.Context, trx model.Transfer) error
+	GetHistory(ctx context.Context, id string) ([]model.Transfer, error)
+	GetWallet(ctx context.Context, id string) (*model.Wallet, error)
 }

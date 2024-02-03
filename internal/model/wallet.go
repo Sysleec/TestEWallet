@@ -7,7 +7,7 @@ type Wallet struct {
 	Balance float64 `json:"balance"`
 }
 
-type Transaction struct {
+type Transfer struct {
 	From   string    `json:"from"`
 	To     string    `json:"to"`
 	Amount float64   `json:"amount"`
