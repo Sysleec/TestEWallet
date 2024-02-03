@@ -1,4 +1,4 @@
-include config.env
+include .env
 
 LOCAL_BIN:=$(CURDIR)/bin
 

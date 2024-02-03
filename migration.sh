@@ -1,5 +1,5 @@
 #!/bin/bash
-source config.env
+source .env
 
 export MIGRATION_DSN=$PG_DSN
 
