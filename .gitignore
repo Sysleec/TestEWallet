@@ -9,6 +9,7 @@
 *.dylib
 /.vscode
 /bin
+WalletDB.session.sql
 
 # Test binary, built with `go test -c`
 *.test

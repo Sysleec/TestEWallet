@@ -18,5 +18,5 @@ func (r *repo) CreateWallet(ctx context.Context) (*model.Wallet, error) {
 		return nil, err
 	}
 
-	return converter.ToSqlcWalletToModelWallet(&wallet), nil
+	return converter.FromSqlcWalletToModelWallet(&wallet), nil
 }

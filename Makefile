@@ -12,6 +12,9 @@ install-deps:
 build:
 	GOOS=linux GOARCH=amd64 go build -o service_linux cmd/main.go
 
+sqlc:
+	sqlc generate
+
 local-migration-status:
 	goose -dir ${LOCAL_MIGRATION_DIR} postgres ${LOCAL_MIGRATION_DSN} status -v
 

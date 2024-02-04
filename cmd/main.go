@@ -58,7 +58,7 @@ func main() {
 
 	db := sqlc.New(conn)
 
-	wRepo := wRepository.NewRepo(db)
+	wRepo := wRepository.NewRepo(db, conn)
 	wServ := wService.NewService(wRepo)
 	wAPI := wApi.NewImplementation(wServ)
 
@@ -74,11 +74,14 @@ func main() {
 
 	api := chi.NewRouter()
 	v1 := chi.NewRouter()
+	wallet := chi.NewRouter()
 
-	v1.Post("/wallet", wAPI.Create)
+	wallet.Post("/", wAPI.Create)
+	wallet.Post("/{walletid}/send", wAPI.SendMoney)
 
 	app.Mount("/api", api)
 	api.Mount("/v1", v1)
+	v1.Mount("/wallet", wallet)
 
 	serv := &http.Server{
 		Addr:              fmt.Sprintf("%v:%v", cfg.HTTPHost, cfg.HTTPPort),

@@ -28,3 +28,71 @@ func (q *Queries) CreateWallet(ctx context.Context, id uuid.UUID) (Wallet, error
 	)
 	return i, err
 }
+
+const creditWallet = `-- name: CreditWallet :one
+UPDATE wallets
+SET amount = amount + $2, 
+    updated_at = NOW()
+WHERE id = $1
+RETURNING id, amount, created_at, updated_at
+`
+
+type CreditWalletParams struct {
+	ID     uuid.UUID
+	Amount float64
+}
+
+func (q *Queries) CreditWallet(ctx context.Context, arg CreditWalletParams) (Wallet, error) {
+	row := q.db.QueryRowContext(ctx, creditWallet, arg.ID, arg.Amount)
+	var i Wallet
+	err := row.Scan(
+		&i.ID,
+		&i.Amount,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const debitWallet = `-- name: DebitWallet :one
+UPDATE wallets
+SET amount = amount - $2, 
+    updated_at = NOW()
+WHERE id = $1
+AND amount >= $2
+RETURNING id, amount, created_at, updated_at
+`
+
+type DebitWalletParams struct {
+	ID     uuid.UUID
+	Amount float64
+}
+
+func (q *Queries) DebitWallet(ctx context.Context, arg DebitWalletParams) (Wallet, error) {
+	row := q.db.QueryRowContext(ctx, debitWallet, arg.ID, arg.Amount)
+	var i Wallet
+	err := row.Scan(
+		&i.ID,
+		&i.Amount,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getWallet = `-- name: GetWallet :one
+SELECT id, amount, created_at, updated_at FROM wallets
+WHERE id = $1
+`
+
+func (q *Queries) GetWallet(ctx context.Context, id uuid.UUID) (Wallet, error) {
+	row := q.db.QueryRowContext(ctx, getWallet, id)
+	var i Wallet
+	err := row.Scan(
+		&i.ID,
+		&i.Amount,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
