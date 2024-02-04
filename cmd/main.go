@@ -78,6 +78,7 @@ func main() {
 
 	wallet.Post("/", wAPI.Create)
 	wallet.Post("/{walletid}/send", wAPI.SendMoney)
+	wallet.Get("/{walletid}/history", wAPI.History)
 
 	app.Mount("/api", api)
 	api.Mount("/v1", v1)

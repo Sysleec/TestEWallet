@@ -32,3 +32,37 @@ func (q *Queries) CreateTransfer(ctx context.Context, arg CreateTransferParams) 
 	)
 	return err
 }
+
+const getHistory = `-- name: GetHistory :many
+SELECT id, amount, from_wallet, to_wallet, time FROM history
+WHERE from_wallet = $1 OR to_wallet = $1
+`
+
+func (q *Queries) GetHistory(ctx context.Context, fromWallet uuid.UUID) ([]History, error) {
+	rows, err := q.db.QueryContext(ctx, getHistory, fromWallet)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []History
+	for rows.Next() {
+		var i History
+		if err := rows.Scan(
+			&i.ID,
+			&i.Amount,
+			&i.FromWallet,
+			&i.ToWallet,
+			&i.Time,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

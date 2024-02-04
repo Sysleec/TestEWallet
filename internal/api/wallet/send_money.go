@@ -44,5 +44,5 @@ func (s *Implementation) SendMoney(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp.RespondWithJSON(w, http.StatusOK, "")
+	resp.RespondWithJSON(w, http.StatusOK, "Money sent successfully")
 }

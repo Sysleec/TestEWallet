@@ -6,6 +6,23 @@ import (
 	"github.com/google/uuid"
 )
 
+func FromSqlcHistoryToModelTransfer(transfer *sqlc.History) *model.Transfer {
+	return &model.Transfer{
+		Amount: transfer.Amount,
+		From:   transfer.FromWallet.String(),
+		To:     transfer.ToWallet.String(),
+		Time:   transfer.Time,
+	}
+}
+
+func FromSqlcHistorySliceToModelTransferSlice(transfers []sqlc.History) []model.Transfer {
+	var result []model.Transfer
+	for _, transfer := range transfers {
+		result = append(result, *FromSqlcHistoryToModelTransfer(&transfer))
+	}
+	return result
+}
+
 func FromSqlcWalletToModelWallet(wallet *sqlc.Wallet) *model.Wallet {
 	return &model.Wallet{
 		ID:      wallet.ID.String(),
