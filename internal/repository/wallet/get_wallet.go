@@ -6,18 +6,14 @@ import (
 
 	"github.com/Sysleec/TestEWallet/internal/model"
 	"github.com/Sysleec/TestEWallet/internal/repository/wallet/converter"
-	"github.com/google/uuid"
 )
 
-func (r *repo) CreateWallet(ctx context.Context) (*model.Wallet, error) {
-	wallet, err := r.DB.CreateWallet(
-		ctx,
-		uuid.New(),
-	)
-
+func (r *repo) GetWallet(ctx context.Context, id string) (*model.Wallet, error) {
+	wallet, err := r.DB.GetWallet(ctx, converter.FromModelTranferToId(id))
 	if err != nil {
-		return nil, fmt.Errorf("failed to create wallet: %w", err)
+		return nil, fmt.Errorf("failed to get wallet: %w", err)
 	}
 
 	return converter.FromSqlcWalletToModelWallet(&wallet), nil
+
 }

@@ -12,6 +12,7 @@ import (
 	"github.com/ilyakaznacheev/cleanenv"
 	_ "github.com/lib/pq"
 	"github.com/pressly/goose/v3"
+	"github.com/rs/zerolog"
 
 	"github.com/Sysleec/TestEWallet/internal/repository/wallet/sqlc"
 
@@ -31,6 +32,7 @@ type Config struct {
 	DSN        string `yaml:"dsn" env:"PG_DSN"`
 	HTTPPort   string `yaml:"http_port" env:"HTTP_PORT" env-default:"8080"`
 	HTTPHost   string `yaml:"http_host" env:"HTTP_HOST" env-default:"localhost"`
+	LogLevel   string `yaml:"http_host" env:"LOG_LEVEL" env-default:"localhost"`
 }
 
 func main() {
@@ -56,6 +58,13 @@ func main() {
 		log.Fatalf("Can't run migrations: %v", err)
 	}
 
+	logLVL, err := zerolog.ParseLevel(cfg.LogLevel)
+	if err != nil {
+		log.Fatalf("Can't parse log level: %v", err)
+	}
+
+	zerolog.SetGlobalLevel(logLVL)
+
 	db := sqlc.New(conn)
 
 	wRepo := wRepository.NewRepo(db, conn)
@@ -79,6 +88,7 @@ func main() {
 	wallet.Post("/", wAPI.Create)
 	wallet.Post("/{walletid}/send", wAPI.SendMoney)
 	wallet.Get("/{walletid}/history", wAPI.History)
+	wallet.Get("/{walletid}", wAPI.Wallet)
 
 	app.Mount("/api", api)
 	api.Mount("/v1", v1)

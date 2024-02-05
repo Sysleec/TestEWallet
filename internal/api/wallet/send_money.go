@@ -8,6 +8,7 @@ import (
 	"github.com/Sysleec/TestEWallet/internal/converter"
 	resp "github.com/Sysleec/TestEWallet/internal/utils"
 	"github.com/go-chi/chi/v5"
+	"github.com/rs/zerolog/log"
 )
 
 func (s *Implementation) SendMoney(w http.ResponseWriter, r *http.Request) {
@@ -43,6 +44,9 @@ func (s *Implementation) SendMoney(w http.ResponseWriter, r *http.Request) {
 		resp.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	log.Info().Msgf("Money sent from wallet: %v", fromWallet)
+	log.Debug().Msgf("Transfer: %v", trs)
 
 	resp.RespondWithJSON(w, http.StatusOK, "Money sent successfully")
 }

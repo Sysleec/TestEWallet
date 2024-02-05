@@ -7,6 +7,7 @@ RETURNING *;
 SELECT * FROM wallets
 WHERE id = $1;
 
+
 -- name: DebitWallet :one
 UPDATE wallets
 SET amount = amount - $2, 
