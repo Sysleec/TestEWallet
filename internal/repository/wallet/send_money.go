@@ -3,7 +3,6 @@ package wallet
 import (
 	"context"
 	"database/sql"
-	"errors"
 
 	"github.com/Sysleec/TestEWallet/internal/model"
 	"github.com/Sysleec/TestEWallet/internal/repository/wallet/converter"
@@ -23,34 +22,34 @@ func (r *repo) SendMoney(ctx context.Context, trans *model.Transfer) error {
 	_, err = txDB.GetWallet(ctx, converter.FromModelTranferToId(trans.From))
 	if err != nil {
 		tx.Rollback()
-		return errors.New("your wallet not found")
+		return model.ErrWalletNotFound
 	}
 
 	// Try to debit the wallet
 	_, err = txDB.DebitWallet(ctx, *converter.FromModelTransferToSqlcDebitWallet(trans))
 	if err != nil {
 		tx.Rollback()
-		return errors.New("insufficient funds")
+		return model.ErrInsufficientFunds
 	}
 
 	// Try to credit the wallet
 	_, err = txDB.CreditWallet(ctx, *converter.FromModelTransferToSqlcCreditWallet(trans))
 	if err != nil {
 		tx.Rollback()
-		return errors.New("target wallet not found")
+		return model.ErrTargetWalletNotFound
 	}
 
 	// Write the transfer to the database
 	err = txDB.CreateTransfer(ctx, *converter.FromModelTransferSqlcTransfer(trans))
 	if err != nil {
 		tx.Rollback()
-		return errors.New("transfer failed")
+		return model.ErrTransferFailed
 	}
 
 	// Commit the transaction
 	err = tx.Commit()
 	if err != nil {
-		return errors.New("transaction failed")
+		return model.ErrTransactionFailed
 	}
 
 	return nil

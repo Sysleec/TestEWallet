@@ -11,6 +11,7 @@ func (s *Implementation) Create(w http.ResponseWriter, r *http.Request) {
 	wallet, err := s.walletService.CreateWallet(r.Context())
 
 	if err != nil {
+		log.Debug().Msgf("Failed to create wallet: %v", err)
 		resp.RespondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}

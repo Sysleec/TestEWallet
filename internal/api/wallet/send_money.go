@@ -2,10 +2,11 @@ package wallet
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
-	"strings"
 
 	"github.com/Sysleec/TestEWallet/internal/converter"
+	"github.com/Sysleec/TestEWallet/internal/model"
 	resp "github.com/Sysleec/TestEWallet/internal/utils"
 	"github.com/go-chi/chi/v5"
 	"github.com/rs/zerolog/log"
@@ -29,15 +30,16 @@ func (s *Implementation) SendMoney(w http.ResponseWriter, r *http.Request) {
 	err = s.walletService.SendMoney(r.Context(), trs)
 
 	if err != nil {
-		if strings.Contains(err.Error(), "your wallet not found") {
+		log.Debug().Msgf("Failed to send money: %v", err)
+		if errors.Is(err, model.ErrWalletNotFound) {
 			resp.RespondWithError(w, http.StatusNotFound, "your wallet not found")
 			return
 		}
-		if strings.Contains(err.Error(), "insufficient funds") {
+		if errors.Is(err, model.ErrInsufficientFunds) {
 			resp.RespondWithError(w, http.StatusBadRequest, "insufficient funds")
 			return
 		}
-		if strings.Contains(err.Error(), "target wallet not found") {
+		if errors.Is(err, model.ErrTargetWalletNotFound) {
 			resp.RespondWithError(w, http.StatusBadRequest, "target wallet not found")
 			return
 		}

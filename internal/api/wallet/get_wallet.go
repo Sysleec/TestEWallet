@@ -14,6 +14,7 @@ func (s *Implementation) Wallet(w http.ResponseWriter, r *http.Request) {
 	wallet, err := s.walletService.GetWallet(r.Context(), walletID)
 
 	if err != nil {
+		log.Debug().Msgf("Wallet not found: %v", walletID)
 		resp.RespondWithError(w, http.StatusNotFound, "your wallet not found")
 		return
 	}
