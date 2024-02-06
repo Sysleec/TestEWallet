@@ -3,7 +3,6 @@ package tests
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -28,7 +27,7 @@ func TestCreateWallet(t *testing.T) {
 		ctx = context.Background()
 		mc  = minimock.NewController(t)
 
-		apiErr = fmt.Errorf("api error")
+		//apiErr = fmt.Errorf("api error")
 
 		id  = gofakeit.UUID()
 		bal = gofakeit.Float64()
@@ -67,10 +66,10 @@ func TestCreateWallet(t *testing.T) {
 				ctx: ctx,
 			},
 			want: nil,
-			err:  apiErr,
+			err:  model.ErrWalletNotFound,
 			walletServiceMock: func(mc *minimock.Controller) *mocks.WalletServiceMock {
 				mock := mocks.NewWalletServiceMock(mc)
-				mock.CreateWalletMock.Expect(ctx).Return(nil, apiErr)
+				mock.CreateWalletMock.Expect(ctx).Return(nil, model.ErrWalletNotFound)
 				return mock
 			},
 			expectedCode: http.StatusBadRequest,

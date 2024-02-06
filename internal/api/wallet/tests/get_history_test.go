@@ -3,7 +3,6 @@ package tests
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -27,7 +26,7 @@ func TestGetHistory(t *testing.T) {
 		ctx = context.Background()
 		mc  = minimock.NewController(t)
 
-		apiErr = fmt.Errorf("api error")
+		//apiErr = fmt.Errorf("api error")
 
 		walletid = gofakeit.UUID()
 		tom      = gofakeit.UUID()
@@ -73,10 +72,10 @@ func TestGetHistory(t *testing.T) {
 				walletid: walletid,
 			},
 			want: nil,
-			err:  apiErr,
+			err:  model.ErrGetHistoryFailed,
 			walletServiceMock: func(mc *minimock.Controller) *mocks.WalletServiceMock {
 				m := mocks.NewWalletServiceMock(mc)
-				m.GetHistoryMock.Expect(minimock.AnyContext, walletid).Return(nil, apiErr)
+				m.GetHistoryMock.Expect(minimock.AnyContext, walletid).Return(nil, model.ErrGetHistoryFailed)
 				return m
 			},
 			expectedCode: http.StatusNotFound,
