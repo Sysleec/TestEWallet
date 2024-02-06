@@ -30,21 +30,21 @@ func (s *Implementation) SendMoney(w http.ResponseWriter, r *http.Request) {
 	err = s.walletService.SendMoney(r.Context(), trs)
 
 	if err != nil {
-		log.Debug().Msgf("Failed to send money: %v", err)
-		if errors.Is(err, model.ErrWalletNotFound) {
+		log.Err(err).Msg("Failed to send money")
+		switch {
+		case errors.Is(err, model.ErrWalletNotFound):
 			resp.RespondWithError(w, http.StatusNotFound, "your wallet not found")
 			return
-		}
-		if errors.Is(err, model.ErrInsufficientFunds) {
+		case errors.Is(err, model.ErrInsufficientFunds):
 			resp.RespondWithError(w, http.StatusBadRequest, "insufficient funds")
 			return
-		}
-		if errors.Is(err, model.ErrTargetWalletNotFound) {
+		case errors.Is(err, model.ErrTargetWalletNotFound):
 			resp.RespondWithError(w, http.StatusBadRequest, "target wallet not found")
 			return
+		default:
+			resp.RespondWithError(w, http.StatusInternalServerError, "Failed to send money")
+			return
 		}
-		resp.RespondWithError(w, http.StatusInternalServerError, err.Error())
-		return
 	}
 
 	log.Info().Msgf("Money sent from wallet: %v", fromWallet)

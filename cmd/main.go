@@ -32,7 +32,7 @@ type Config struct {
 	DSN        string `yaml:"dsn" env:"PG_DSN"`
 	HTTPPort   string `yaml:"http_port" env:"HTTP_PORT" env-default:"8080"`
 	HTTPHost   string `yaml:"http_host" env:"HTTP_HOST" env-default:"localhost"`
-	LogLevel   string `yaml:"http_host" env:"LOG_LEVEL" env-default:"localhost"`
+	LogLevel   string `yaml:"log_level" env:"LOG_LEVEL" env-default:"info"`
 }
 
 func main() {

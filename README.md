@@ -84,6 +84,86 @@ All endpoints can be tested at `45.8.97.234:8081`.
   }
   ```
 
+## 📂 Repository Structure
+
+```sh
+└── TestEWallet/
+    ├── Dockerfile
+    ├── Makefile
+    ├── README.md
+    ├── cmd
+    │   └── main.go
+    ├── docker-compose.yaml
+    ├── go.mod
+    ├── go.sum
+    ├── go.work.sum
+    ├── internal
+    │   ├── api
+    │   │   └── wallet
+    │   │       ├── create_wallet.go
+    │   │       ├── get_history.go
+    │   │       ├── get_wallet.go
+    │   │       ├── send_money.go
+    │   │       ├── service.go
+    │   │       └── tests
+    │   │           ├── create_wallet_test.go
+    │   │           ├── get_history_test.go
+    │   │           ├── get_wallet_test.go
+    │   │           └── send_money_test.go
+    │   ├── converter
+    │   │   └── wallet.go
+    │   ├── model
+    │   │   ├── errors.go
+    │   │   └── wallet.go
+    │   ├── repository
+    │   │   ├── generate.go
+    │   │   ├── mocks
+    │   │   │   └── wallet_repository_minimock.go
+    │   │   ├── repository.go
+    │   │   └── wallet
+    │   │       ├── converter
+    │   │       │   └── wallet.go
+    │   │       ├── create_wallet.go
+    │   │       ├── get_history.go
+    │   │       ├── get_wallet.go
+    │   │       ├── repository.go
+    │   │       ├── send_money.go
+    │   │       └── sqlc
+    │   │           ├── db.go
+    │   │           ├── history.sql.go
+    │   │           ├── models.go
+    │   │           └── wallet.sql.go
+    │   ├── service
+    │   │   ├── generate.go
+    │   │   ├── mocks
+    │   │   │   └── wallet_service_minimock.go
+    │   │   ├── service.go
+    │   │   └── wallet
+    │   │       ├── create_wallet.go
+    │   │       ├── get_history.go
+    │   │       ├── get_wallet.go
+    │   │       ├── send_money.go
+    │   │       ├── service.go
+    │   │       └── tests
+    │   │           ├── create_wallet_test.go
+    │   │           ├── get_history_test.go
+    │   │           ├── get_wallet_test.go
+    │   │           └── send_money_test.go
+    │   └── utils
+    │       └── json.go
+    ├── migration.Dockerfile
+    ├── migration.sh
+    ├── sql
+    │   ├── fs.go
+    │   ├── queries
+    │   │   ├── history.sql
+    │   │   └── wallet.sql
+    │   └── schema
+    │       ├── 001_wallets.sql
+    │       └── 002_history.sql
+    └── sqlc.yaml
+```
+
 ## 💡 Contributing
 
 Your contributions are welcome! Please submit a pull request or create an issue for any features, bug fixes, or improvements.

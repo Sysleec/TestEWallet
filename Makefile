@@ -10,9 +10,11 @@ install-deps:
 	GOBIN=$(LOCAL_BIN) go install github.com/sqlc-dev/sqlc/cmd/sqlc@v1.25.0
 	GOBIN=$(LOCAL_BIN) go install github.com/gojuno/minimock/v3/cmd/minimock@v3.3.1
 
-
 build:
 	GOOS=linux GOARCH=amd64 go build -o service_linux cmd/main.go
+
+run:
+	go run ./...
 
 .PHONY: test
 test:

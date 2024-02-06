@@ -14,8 +14,8 @@ func (s *Implementation) History(w http.ResponseWriter, r *http.Request) {
 	history, err := s.walletService.GetHistory(r.Context(), walletID)
 
 	if err != nil {
-		log.Debug().Msgf("Wallet not found: %v", walletID)
-		resp.RespondWithError(w, http.StatusNotFound, err.Error())
+		log.Err(err).Msgf("Failed to get history for wallet: %v", walletID)
+		resp.RespondWithError(w, http.StatusNotFound, "wallet not found")
 		return
 	}
 
