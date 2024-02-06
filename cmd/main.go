@@ -1,10 +1,14 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -25,11 +29,10 @@ import (
 
 type Config struct {
 	BDPort     string `yaml:"port" env:"PG_PORT" env-default:"5432"`
-	BDHost     string `yaml:"host" env:"HOST" env-default:"localhost"`
+	BDHost     string `yaml:"host" env:"PG_HOST" env-default:"localhost"`
 	BDName     string `yaml:"name" env:"PG_DATABASE_NAME" env-default:"postgres"`
 	BDUser     string `yaml:"user" env:"PG_USER" env-default:"user"`
 	BDPassword string `yaml:"password" env:"PG_PASSWORD"`
-	DSN        string `yaml:"dsn" env:"PG_DSN"`
 	HTTPPort   string `yaml:"http_port" env:"HTTP_PORT" env-default:"8080"`
 	HTTPHost   string `yaml:"http_host" env:"HTTP_HOST" env-default:"localhost"`
 	LogLevel   string `yaml:"log_level" env:"LOG_LEVEL" env-default:"info"`
@@ -42,7 +45,9 @@ func main() {
 		log.Fatalf("Configuration error: %v", err)
 	}
 
-	conn, err := sql.Open("postgres", cfg.DSN)
+	//dsn
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", cfg.BDHost, cfg.BDPort, cfg.BDUser, cfg.BDPassword, cfg.BDName)
+	conn, err := sql.Open("postgres", dsn)
 	if err != nil {
 		log.Fatalf("Can't connect to DB: %v", err)
 	}
@@ -94,14 +99,37 @@ func main() {
 	api.Mount("/v1", v1)
 	v1.Mount("/wallet", wallet)
 
+	log.Printf("Server started at %v:%v", cfg.HTTPHost, cfg.HTTPPort)
+
 	serv := &http.Server{
 		Addr:              fmt.Sprintf("%v:%v", cfg.HTTPHost, cfg.HTTPPort),
 		Handler:           app,
 		ReadHeaderTimeout: 10 * time.Second,
 	}
 
-	fmt.Printf("Server serving on port %v...\n", cfg.HTTPPort)
+	go func() {
+		if err := serv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("Server failed to start: %v", err)
+		}
+	}()
 
-	log.Fatal(serv.ListenAndServe())
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	log.Println("Shutting down server...")
 
+	ctx, cancel := context.WithTimeout(context.Background(), 8*time.Second)
+	defer cancel()
+
+	if err := serv.Shutdown(ctx); err != nil {
+		cancel()
+		log.Fatalf("Server forced to shutdown: %s\n", err)
+	}
+
+	if err := conn.Close(); err != nil {
+		cancel()
+		log.Fatalf("DB connection forced to close: %v", err)
+	}
+
+	log.Println("Server exiting")
 }
