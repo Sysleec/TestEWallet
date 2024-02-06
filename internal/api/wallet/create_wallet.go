@@ -12,7 +12,7 @@ func (s *Implementation) Create(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		log.Debug().Msgf("Failed to create wallet: %v", err)
-		resp.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		resp.RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 

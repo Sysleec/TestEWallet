@@ -18,7 +18,7 @@ func (s *Implementation) SendMoney(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	defer r.Body.Close()
 
-	params := converter.TransferReqParams{}
+	params := model.TransferReq{}
 	err := decoder.Decode(&params)
 	if err != nil {
 		resp.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")

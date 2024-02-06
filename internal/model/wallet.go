@@ -13,3 +13,8 @@ type Transfer struct {
 	To     string    `json:"to"`
 	Amount float64   `json:"amount"`
 }
+
+type TransferReq struct {
+	To     string  `json:"to"`
+	Amount float64 `json:"amount"`
+}

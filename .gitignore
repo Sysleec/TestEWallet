@@ -22,3 +22,4 @@ WalletDB.session.sql
 
 # Go workspace file
 go.work
+/coverage.out
