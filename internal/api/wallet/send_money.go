@@ -30,7 +30,6 @@ func (s *Implementation) SendMoney(w http.ResponseWriter, r *http.Request) {
 	err = s.walletService.SendMoney(r.Context(), trs)
 
 	if err != nil {
-		log.Err(err).Msg("Failed to send money")
 		switch {
 		case errors.Is(err, model.ErrWalletNotFound):
 			resp.RespondWithError(w, http.StatusNotFound, "your wallet not found")

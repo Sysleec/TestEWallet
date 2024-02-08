@@ -3,7 +3,6 @@ package wallet
 import (
 	"net/http"
 
-	"github.com/Sysleec/TestEWallet/internal/model"
 	resp "github.com/Sysleec/TestEWallet/internal/utils"
 	"github.com/rs/zerolog/log"
 )
@@ -13,7 +12,7 @@ func (s *Implementation) Create(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		log.Err(err).Msg("Failed to create wallet")
-		resp.RespondWithError(w, http.StatusBadRequest, model.ErrWalletNotFound.Error())
+		resp.RespondWithError(w, http.StatusBadRequest, "Failed to create wallet")
 		return
 	}
 

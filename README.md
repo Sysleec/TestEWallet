@@ -56,7 +56,7 @@ All endpoints can be tested at `45.8.97.234:8081`.
     "amount": 50.0
   }
   ```
-- **Response**: Status 200 OK if successful, with no body.
+- **Response**: Status 200 OK if successful.
 
 ### Transaction History
 
